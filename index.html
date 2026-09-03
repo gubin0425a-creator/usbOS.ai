@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaffleOS - 차세대 올인원 AI Kiosk 운영체제</title>
+    <meta name="description" content="Windows 64비트 및 32비트를 모두 지원하는 프라이빗 AI Kiosk 운영체제 WaffleOS 공식 다운로드 및 소개">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0b10;
+            --surface: #13151f;
+            --surface-hover: #1a1e2d;
+            --border: #23273a;
+            --primary: #0078d4;
+            --primary-glow: #60cdff;
+            --accent: #ffb900;
+            --green: #2ecc71;
+            --text: #f1f3f7;
+            --text-sub: #8e96a7;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans KR', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+        /* Navigation */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 40px; max-width: 1200px; margin: 0 auto; border-bottom: 1px solid var(--border); }
+        .logo { font-size: 22px; font-weight: 900; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; gap: 24px; }
+        .nav-links a { color: var(--text-sub); text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--primary-glow); }
+
+        /* Hero */
+        .hero { text-align: center; padding: 80px 20px 60px; max-width: 1000px; margin: 0 auto; }
+        .badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 120, 212, 0.15); border: 1px solid rgba(96, 205, 255, 0.3); color: var(--primary-glow); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 20px; }
+        h1 { font-size: 50px; font-weight: 900; line-height: 1.25; margin-bottom: 20px; background: linear-gradient(135deg, #ffffff 40%, #60cdff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.sub { font-size: 19px; color: var(--text-sub); margin-bottom: 36px; font-weight: 300; }
+
+        /* Download Dual Buttons */
+        .download-box { display: flex; justify-content: center; gap: 18px; margin-bottom: 16px; flex-wrap: wrap; }
+        .btn-dl-64 { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #0078d4, #005a9e); color: #fff; text-decoration: none; padding: 18px 36px; border-radius: 10px; font-size: 17px; font-weight: 700; box-shadow: 0 10px 30px rgba(0, 120, 212, 0.45); transition: all 0.2s; }
+        .btn-dl-64:hover { transform: translateY(-3px); background: linear-gradient(135deg, #1084d9, #0067c0); box-shadow: 0 14px 40px rgba(0, 120, 212, 0.6); }
+        .btn-dl-32 { display: inline-flex; align-items: center; gap: 10px; background: #1a1e2d; color: #fff; text-decoration: none; padding: 18px 32px; border-radius: 10px; font-size: 17px; font-weight: 600; border: 1px solid var(--border); transition: all 0.2s; }
+        .btn-dl-32:hover { background: #242a3e; border-color: var(--primary); }
+
+        /* Sections */
+        section { max-width: 1100px; margin: 0 auto 90px; padding: 0 20px; }
+        .sec-header { text-align: center; margin-bottom: 48px; }
+        .sec-title { font-size: 32px; font-weight: 800; margin-bottom: 10px; color: #fff; }
+        .sec-desc { color: var(--text-sub); font-size: 15px; }
+
+        /* Comparison Table */
+        .table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 18px 24px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        th { background: #181b28; color: var(--primary-glow); font-weight: 700; }
+        tr:last-child td { border-bottom: none; }
+        .highlight { color: #fff; font-weight: 600; }
+
+        /* Features Grid */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; transition: all 0.2s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .card-icon { font-size: 36px; margin-bottom: 14px; }
+        .card h3 { font-size: 19px; margin-bottom: 10px; color: #fff; font-weight: 700; }
+        .card p { font-size: 14px; color: var(--text-sub); line-height: 1.7; }
+
+        /* Pricing Card */
+        .price-box { background: linear-gradient(180deg, #131726, #0e1019); border: 1px solid rgba(96, 205, 255, 0.3); border-radius: 16px; padding: 40px; text-align: center; max-width: 600px; margin: 0 auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .price-tag { font-size: 54px; font-weight: 900; color: #fff; margin: 16px 0; }
+        .price-tag span { font-size: 18px; color: var(--text-sub); font-weight: 400; }
+
+        /* Changelog */
+        .changelog { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 30px; }
+        .log-item { display: flex; gap: 16px; margin-bottom: 20px; }
+        .log-ver { background: #0078d4; color: white; padding: 2px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; height: fit-content; }
+        .log-txt h4 { color: #fff; font-size: 16px; margin-bottom: 6px; }
+        .log-txt p { color: var(--text-sub); font-size: 14px; }
+
+        /* Feedback Form */
+        .feedback-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; max-width: 700px; margin: 0 auto; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #fff; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; background: #1c2030; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: #fff; font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary-glow); }
+        .btn-submit { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .btn-submit:hover { background: #1084d9; }
+
+        footer { border-top: 1px solid var(--border); padding: 40px 20px; text-align: center; color: var(--text-sub); font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav>
+        <a href="#" class="logo">🧇 WaffleOS</a>
+        <div class="nav-links">
+            <a href="#compare">64비트 vs 32비트</a>
+            <a href="#features">특징 & 차별점</a>
+            <a href="#pricing">가격</a>
+            <a href="#security">보안 시스템</a>
+            <a href="#changelog">업데이트 내역</a>
+            <a href="#feedback">의견 보내기</a>
+        </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <div class="hero">
+        <div class="badge">🔥 v1.0.0 정식 배포판 출시</div>
+        <h1>상상을 현실로 만드는<br>차세대 AI & Kiosk 운영체제</h1>
+        <p class="sub">
+            윈도우에서 1초 만에 켜고 끄는 앱 같은 OS. <br>
+            최신 64비트 PC와 구형 32비트 환경을 모두 지원하며, 최고 수준의 유니코드 은닉 암호화 기술이 적용되었습니다.
+        </p>
+
+        <!-- Dual Download Buttons -->
+        <div class="download-box">
+            <a href="https://github.com/gubin0425a-creator/WaffleOS/releases/latest" class="btn-dl-64">
+                📥 64비트 버전 다운로드 (Windows 10/11 권장)
+            </a>
+            <a href="https://github.com/gubin0425a-creator/WaffleOS/releases/latest" class="btn-dl-32">
+                💾 32비트 버전 다운로드 (저사양/레거시 PC용)
+            </a>
+        </div>
+        <p style="font-size: 13px; color: var(--text-sub);">
+            완전 무료 오픈소스 &bull; GNU GPL-3.0 라이선스 &bull; 무설치 USB/가상머신 구동 가능
+        </p>
+    </div>
+
+    <!-- 1. 64비트 vs 32비트 차이점 분석 -->
+    <section id="compare">
+        <div class="sec-header">
+            <h2 class="sec-title">⚖️ 64비트 vs 32비트 에디션 비교 및 차이점</h2>
+            <p class="sec-desc">사용하시는 컴퓨터 환경에 맞춰 최적의 버전을 선택하세요.</p>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>비교 항목</th>
+                        <th>WaffleOS 64-bit (Windows 우선 권장)</th>
+                        <th>WaffleOS 32-bit (레거시/저사양)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="highlight">추천 기기</td>
+                        <td>최신 데스크톱, 노트북, Windows 10/11 PC</td>
+                        <td>구형 넷북, 32비트 전용 PC, 임베디드 장비</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">최소 요구 RAM</td>
+                        <td>2 GB ~ 4 GB 이상 권장</td>
+                        <td>512 MB ~ 1 GB에서도 가볍게 작동</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">AI 스트리밍 속도</td>
+                        <td>AVX2/AVX-512 고속 벡터 연산 가속</td>
+                        <td>기본 SSE2 기반의 안정적인 통신</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">실생활 멀티태스킹</td>
+                        <td>유튜브 4K 재생, 고사양 3D 에뮬레이터 구동</td>
+                        <td>가벼운 웹서핑, 레트로 2D 게임 플레이</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight">C/NASM 네이티브 코어</td>
+                        <td>64비트 레지스터 및 32비트 하위 호환 툴체인</td>
+                        <td>순수 32비트 x86 Protected Mode 커널 전용</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 2. 특징 및 남다른 점 -->
+    <section id="features">
+        <div class="sec-header">
+            <h2 class="sec-title">🌟 WaffleOS만의 남다른 점과 핵심 기능</h2>
+            <p class="sec-desc">기존의 무거운 윈도우나 리눅스와는 완전히 다른 새로운 경험을 제공합니다.</p>
+        </div>
+        <div class="grid-cards">
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h3>1초 만에 윈도우로 복귀 (패닉 버튼)</h3>
+                <p>가상머신에 갇히지 않습니다. [절전/은닉] 버튼 하나로 현재 작업을 100% 보존한 채 1초 만에 윈도우 바탕화면으로 넘나듭니다.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🌍</div>
+                <h3>8개국어 & 유니코드 15+ 컬러 이모지</h3>
+                <p>한국어, 영어, 일본어, 중국어, 스페인어, 프랑스어, 독일어, 러시아어 완벽 지원과 불꽃(🔥), 와플(🧇), 보석(💎) 등 모든 이모지가 깨짐 없이 네이티브로 렌더링됩니다.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🤖</div>
+                <h3>무제한 AI 모델 & API 자유 확장</h3>
+                <p>OpenAI, Gemini, Claude는 물론 사용자가 원하는 최신 AI(DeepSeek, Groq, 무료 로컬 Ollama)를 언제든지 클릭 몇 번으로 등록하여 대화할 수 있습니다.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎮</div>
+                <h3>실생활 인터넷 & 고사양 에뮬레이터</h3>
+                <p>Chromium 브라우저를 통한 유튜브/넷플릭스 시청과 RetroArch 및 Wine을 통한 윈도우 게임/레트로 콘솔 게임 에뮬레이션을 기본 지원합니다.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚙️</div>
+                <h3>32비트 C/NASM 네이티브 진단 코어</h3>
+                <p>CPU의 어셈블리 명령어(CPUID)와 GCC 컴파일러 버전을 OS 화면 안에서 실시간으로 직접 확인하고 OS 개발을 테스트할 수 있습니다.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🪟</div>
+                <h3>프로그램처럼 실행되는 OS</h3>
+                <p>복잡한 설치 과정 없이 하나의 윈도우 프로그램처럼 창 모드로 가볍게 실행하고 종료할 수 있습니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 투명한 가격 정책 -->
+    <section id="pricing">
+        <div class="sec-header">
+            <h2 class="sec-title">💰 100% 투명한 무료 가격 정책</h2>
+            <p class="sec-desc">WaffleOS는 상업적 숨김 비용이 일절 없는 순수 오픈소스 프로젝트입니다.</p>
+        </div>
+        <div class="price-box">
+            <h3>WaffleOS Community Edition</h3>
+            <div class="price-tag">0원 <span>/ 평생 무료</span></div>
+            <p style="color: var(--text-sub); margin-bottom: 24px;">
+                운영체제 라이선스 비용: <b>0원</b> &bull; 광고: <b>0개</b> &bull; 강제 회원가입: <b>없음</b>
+            </p>
+            <div style="text-align: left; font-size: 14px; line-height: 2; color: #ddd;">
+                ✔ 64비트 및 32비트 ISO 완전 무료 다운로드<br>
+                ✔ BYOK(자체 키 사용) 방식으로 AI 사용료는 각 AI 제조사(OpenAI 등)에 실제 쓴 만큼만 수십 원 단위 결제 또는 무료 모델 사용<br>
+                ✔ 개인 및 교육 목적 영구 무료 (GPL-3.0 오픈소스 라이선스)
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 최고 수준 보안 시스템 -->
+    <section id="security">
+        <div class="sec-header">
+            <h2 class="sec-title">🛡️ 최고 수준의 군사 등급 데이터 보안</h2>
+            <p class="sec-desc">디스크를 통째로 복제해가도 절대 데이터를 볼 수 없는 3중 철벽 방어</p>
+        </div>
+        <div class="grid-cards">
+            <div class="card">
+                <div class="card-icon">👻</div>
+                <h3>보이지 않는 글자 (Zero-Width) 은닉 기술</h3>
+                <p>API 키와 중요 정보를 평범한 글자 속에 존재하는 '보이지 않는 유니코드 특수문자' 속에 암호화하여 은닉합니다. 파일을 열어도 아무 내용이 보이지 않습니다.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔐</div>
+                <h3>Argon2id + AES-256-GCM 복합 암호화</h3>
+                <p>GPU 무차별 대입 해킹을 방어하는 최신 양자 저항형 Argon2id 키 유도 알고리즘과 군사 등급 AES-256-GCM 대칭키로 이중 잠금 처리됩니다.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🧼</div>
+                <h3>Amnesic RAM 소거 종료</h3>
+                <p>시스템 종료 시 메모리에 남아있는 대화 내역과 임시 캐시를 0으로 완벽히 덮어써서(Wipe) 디지털 포렌식으로도 복구가 불가능합니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. 최신 업데이트 내역 -->
+    <section id="changelog">
+        <div class="sec-header">
+            <h2 class="sec-title">📋 최신 업데이트 변경 내역 (Changelog)</h2>
+            <p class="sec-desc">WaffleOS의 지속적인 진화와 개선 기록입니다.</p>
+        </div>
+        <div class="changelog">
+            <div class="log-item">
+                <span class="log-ver">v1.0.0 Ultimate</span>
+                <div class="log-txt">
+                    <h4>최초 정식 릴리즈 및 Windows 우선 지원 전면 개편</h4>
+                    <p>&bull; 64비트 Windows 10/11 전용 원클릭 배치 실행기(.bat) 기본 지원<br>
+                       &bull; 32비트 레거시 PC 호환 하위 모듈 동시 릴리즈<br>
+                       &bull; 8개국어 실시간 언어팩(KO, EN, JA, ZH, ES, FR, DE, RU) 및 컬러 이모지 내장<br>
+                       &bull; Zero-Width 유니코드 은닉 스테가노그래피 암호화 엔진 탑재<br>
+                       &bull; 1초 윈도우 복귀(절전) 및 패닉 은닉 버튼 추가</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. 사용자가 바라는 점 / 의견 전송 (gubin0425@icloud.com 자동 전송) -->
+    <section id="feedback">
+        <div class="sec-header">
+            <h2 class="sec-title">💌 사용자가 바라는 점 & 기능 제안</h2>
+            <p class="sec-desc">
+                WaffleOS에 추가되었으면 하는 기능이나 개선점을 적어주세요. <br>
+                작성하신 내용은 개발자(<b>gubin0425@icloud.com</b>)에게 즉시 안전하게 자동 전송됩니다.
+            </p>
+        </div>
+
+        <div class="feedback-box">
+            <!-- Formsubmit.co를 통해 백엔드 서버 없이 gubin0425@icloud.com으로 바로 전송 -->
+            <form action="https://formsubmit.co/gubin0425@icloud.com" method="POST">
+                <!-- 스팸 방지 및 이메일 제목 설정 -->
+                <input type="hidden" name="_subject" value="[WaffleOS] 사용자가 바라는 점이 도착했습니다!">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+
+                <div class="form-group">
+                    <label for="user_email">답변받으실 이메일 (선택 사항):</label>
+                    <input type="email" id="user_email" name="user_email" placeholder="name@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">제안 분야:</label>
+                    <select id="category" name="category">
+                        <option value="새로운 기능 제안">새로운 기능 제안 (Feature Request)</option>
+                        <option value="지원 희망 AI 모델">지원 희망 AI 모델 추가</option>
+                        <option value="게임/에뮬레이터 관련">게임 / 에뮬레이터 관련</option>
+                        <option value="보안 및 편의성 개선">보안 및 편의성 개선</option>
+                        <option value="버그 제보">버그 제보 (Bug Report)</option>
+                        <option value="기타 응원 메시지">기타 응원 및 질문</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="wishlist">WaffleOS에 바라는 점을 자유롭게 적어주세요 (*필수):</label>
+                    <textarea id="wishlist" name="wishlist" rows="6" placeholder="예: 이런 게임도 잘 돌아갔으면 좋겠어요, 이런 AI 모델도 추가해 주세요, 윈도우 단축키가 더 편해졌으면 좋겠습니다 등..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">🚀 개발자에게 의견 보내기 (gubin0425@icloud.com)</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 WaffleOS Project. All Rights Reserved. Released under GNU GPL-3.0 License.</p>
+        <p style="margin-top: 8px;">제작 및 문의: <a href="mailto:gubin0425@icloud.com" style="color: var(--primary-glow); text-decoration: none;">gubin0425@icloud.com</a></p>
+    </footer>
+
+</body>
+</html>
