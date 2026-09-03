@@ -39,8 +39,8 @@ jobs:
           cat << 'EOF' > config/package-lists/waffle.list.chroot
           linux-image-amd64 firmware-linux-free systemd-sysv locales
           fonts-noto-cjk fonts-noto-color-emoji fonts-nanum
-          fcitx5 fcitx5-hangul fcitx5-frontend-qt6
-          virtualbox-guest-x11 virtualbox-guest-utils xorg xinit openbox unclutter
+          fcitx5 fcitx5-hangul
+          xorg xinit openbox unclutter
           systemd-resolved isc-dhcp-client ca-certificates curl
           python3 python3-pyqt6 python3-requests gcc gcc-multilib libc6-dev-i386 nasm
           EOF
@@ -50,7 +50,6 @@ jobs:
           mkdir -p "$CHROOT/etc/systemd/system/getty@tty1.service.d"
           mkdir -p "$CHROOT/etc/skel/.config/openbox"
 
-          # 1. 자동 로그인 설정
           cat << 'EOF' > "$CHROOT/etc/systemd/system/getty@tty1.service.d/override.conf"
           [Service]
           ExecStart=
@@ -58,7 +57,6 @@ jobs:
           Type=simple
           EOF
 
-          # 2. X11 시작 및 Openbox 설정
           cat << 'EOF' > "$CHROOT/etc/skel/.bash_profile"
           if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
               export LANG="ko_KR.UTF-8"
@@ -67,7 +65,7 @@ jobs:
           EOF
 
           cat << 'EOF' > "$CHROOT/etc/skel/.config/openbox/autostart"
-          VBoxClient-all &
+          which VBoxClient-all >/dev/null 2>&1 && VBoxClient-all &
           unclutter -idle 3 &
           export GTK_IM_MODULE=fcitx
           export QT_IM_MODULE=fcitx
@@ -76,7 +74,6 @@ jobs:
           exec /usr/bin/python3 /opt/waffleos/waffle_app.py
           EOF
 
-          # 3. 32비트 C & NASM 진단 코어
           cat << 'EOF' > "$CHROOT/opt/waffleos/cpu_detect.asm"
           section .text
           global get_cpu_vendor
@@ -112,7 +109,6 @@ jobs:
           }
           EOF
 
-          # 4. GUI 클라이언트
           cat << 'EOF' > "$CHROOT/opt/waffleos/waffle_app.py"
           import sys, os, subprocess
           from PyQt6.QtCore import Qt
@@ -184,7 +180,6 @@ jobs:
               sys.exit(app.exec())
           EOF
 
-          # 5. 로케일 설정 및 C/NASM 컴파일 훅
           mkdir -p config/hooks/live
           cat << 'EOF' > config/hooks/live/01-setup.hook.chroot
           #!/bin/sh
