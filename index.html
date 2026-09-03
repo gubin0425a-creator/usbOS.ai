@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>usbOS.ai — 내 주머니 속 프라이빗 AI 운영체제</title>
+    <title>usbOS.ai — Your Private AI Operating System</title>
     <meta name="description" content="VirtualBox 없이 프로그램처럼 실행되는 차세대 포터블 AI Kiosk 운영체제 usbOS.ai">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;1,300&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -50,13 +50,27 @@
             justify-content: space-between;
             padding: 10px 18px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1060px;
         }
         .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; color: var(--color-ink-black); text-decoration: none; }
         .logo-icon { color: var(--color-signal-violet); font-size: 18px; }
-        .nav-links { display: flex; gap: 20px; }
+        .nav-links { display: flex; gap: 16px; }
         .nav-links a { color: var(--color-ink-black); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.15s; }
         .nav-links a:hover { color: var(--color-signal-violet); }
+        
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .lang-select {
+            background: var(--color-fog-gray);
+            border: 1px solid var(--color-mist-gray);
+            border-radius: var(--radius-pill);
+            padding: 6px 12px;
+            font-size: 13px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            color: var(--color-ink-black);
+            cursor: pointer;
+            outline: none;
+        }
         .btn-pill {
             background: var(--color-signal-violet);
             color: var(--color-pure-white);
@@ -217,7 +231,7 @@
 </head>
 <body>
 
-    <!-- Floating Navigation Bar -->
+    <!-- Floating Navigation Bar with Language Switcher -->
     <div class="nav-wrap">
         <nav>
             <a href="#" class="logo">
@@ -225,34 +239,46 @@
                 <span>usbOS.ai</span>
             </a>
             <div class="nav-links">
-                <a href="#compare">에디션 비교</a>
-                <a href="#features">특징 & 차별점</a>
-                <a href="#security">보안 구조</a>
-                <a href="#pricing">가격</a>
-                <a href="#feedback">바라는 점</a>
+                <a href="#compare" data-i18n="nav_compare">에디션 비교</a>
+                <a href="#features" data-i18n="nav_features">특징 & 차별점</a>
+                <a href="#security" data-i18n="nav_security">보안 구조</a>
+                <a href="#pricing" data-i18n="nav_pricing">가격</a>
+                <a href="#feedback" data-i18n="nav_feedback">바라는 점</a>
             </div>
-            <a href="#download" class="btn-pill">다운로드 ↗</a>
+            <div class="nav-right">
+                <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
+                    <option value="ko">🇰🇷 한국어</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                    <option value="zh">🇨🇳 简体中文</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                </select>
+                <a href="#download" class="btn-pill" data-i18n="nav_download">다운로드 ↗</a>
+            </div>
         </nav>
     </div>
 
     <!-- Hero Section -->
     <div class="hero" id="download">
-        <div class="badge-mint"><span class="badge-dot"></span> v1.0.0 정식 배포판</div>
-        <h1 class="hero-title">Your Private AI.<br><i>Operating</i> in your pocket.</h1>
-        <p class="hero-desc">
+        <div class="badge-mint"><span class="badge-dot"></span> <span data-i18n="hero_badge">v1.0.0 정식 배포판</span></div>
+        <h1 class="hero-title" data-i18n="hero_title">Your Private AI.<br><i>Operating</i> in your pocket.</h1>
+        <p class="hero-desc" data-i18n="hero_desc">
             VirtualBox 설치 없이 윈도우 프로그램처럼 1초 만에 켜고 끕니다. <br>
             대화와 API 키가 안전하게 보존되는 영구 저장 금고, 8개국어 유니코드 15+ 이모지, 32비트 C/NASM 네이티브 코어를 탑재한 차세대 포터블 AI OS입니다.
         </p>
 
         <div class="hero-actions">
-            <a href="https://github.com/gubin0425a-creator/usbOS.ai/releases/latest" class="btn-pill">
+            <a href="https://github.com/gubin0425a-creator/usbOS.ai/releases/latest" class="btn-pill" data-i18n="btn_dl_64">
                 64비트 버전 다운로드 (Windows 10/11) ↗
             </a>
-            <a href="https://github.com/gubin0425a-creator/usbOS.ai/releases/latest" class="btn-pill-ghost">
+            <a href="https://github.com/gubin0425a-creator/usbOS.ai/releases/latest" class="btn-pill-ghost" data-i18n="btn_dl_32">
                 32비트 레거시 에디션 (저사양용)
             </a>
         </div>
-        <span style="font-size: 13px; color: var(--color-slate-gray);">완전 무료 오픈소스 • GNU GPL-3.0 • 무설치 USB 부팅 지원</span>
+        <span style="font-size: 13px; color: var(--color-slate-gray);" data-i18n="hero_sub_note">완전 무료 오픈소스 • GNU GPL-3.0 • 무설치 USB 부팅 지원</span>
     </div>
 
     <!-- Tri-Color Section Divider -->
@@ -266,42 +292,42 @@
     <section id="compare">
         <div class="sec-header">
             <div class="sec-label">Architecture Matrix</div>
-            <h2 class="sec-title">64-bit &bull; 32-bit 에디션 비교</h2>
+            <h2 class="sec-title" data-i18n="compare_title">64-bit &bull; 32-bit 에디션 비교</h2>
         </div>
         <div class="card-table">
             <table>
                 <thead>
                     <tr>
-                        <th>비교 항목</th>
-                        <th>usbOS.ai 64-bit (Windows 우선 권장)</th>
-                        <th>usbOS.ai 32-bit (레거시 & 임베디드)</th>
+                        <th data-i18n="th_item">비교 항목</th>
+                        <th data-i18n="th_64">usbOS.ai 64-bit (Windows 우선 권장)</th>
+                        <th data-i18n="th_32">usbOS.ai 32-bit (레거시 & 임베디드)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="hl">추천 기기</td>
-                        <td>최신 데스크톱, 노트북, Windows 10 & 11 시스템</td>
-                        <td>구형 넷북, 32비트 전용 PC, 교육용 임베디드 장비</td>
+                        <td class="hl" data-i18n="row_target">추천 기기</td>
+                        <td data-i18n="row_target_64">최신 데스크톱, 노트북, Windows 10 & 11 시스템</td>
+                        <td data-i18n="row_target_32">구형 넷북, 32비트 전용 PC, 교육용 임베디드 장비</td>
                     </tr>
                     <tr>
-                        <td class="hl">RAM 최소 사양</td>
-                        <td>2 GB ~ 4 GB 이상 권장</td>
-                        <td>512 MB ~ 1 GB에서도 가볍고 민첩하게 동작</td>
+                        <td class="hl" data-i18n="row_ram">RAM 최소 사양</td>
+                        <td data-i18n="row_ram_64">2 GB ~ 4 GB 이상 권장</td>
+                        <td data-i18n="row_ram_32">512 MB ~ 1 GB에서도 가볍고 민첩하게 동작</td>
                     </tr>
                     <tr>
-                        <td class="hl">데이터 영구 저장</td>
-                        <td>암호화 데이터 금고(Persistence) 완벽 지원</td>
-                        <td>암호화 데이터 금고(Persistence) 완벽 지원</td>
+                        <td class="hl" data-i18n="row_storage">데이터 영구 저장</td>
+                        <td data-i18n="row_storage_64">암호화 데이터 금고(Persistence) 완벽 지원</td>
+                        <td data-i18n="row_storage_32">암호화 데이터 금고(Persistence) 완벽 지원</td>
                     </tr>
                     <tr>
-                        <td class="hl">실생활 앱 생태계</td>
-                        <td>Chromium 4K 유튜브, 3D 에뮬레이터 고화질 구동</td>
-                        <td>가벼운 웹서핑 및 2D 레트로 게임 구동</td>
+                        <td class="hl" data-i18n="row_apps">실생활 앱 생태계</td>
+                        <td data-i18n="row_apps_64">Chromium 4K 유튜브, 3D 에뮬레이터 고화질 구동</td>
+                        <td data-i18n="row_apps_32">가벼운 웹서핑 및 2D 레트로 게임 구동</td>
                     </tr>
                     <tr>
-                        <td class="hl">C / NASM 코어</td>
-                        <td>64비트 레지스터 및 32비트 하위 호환 크로스 링커</td>
-                        <td>순수 32비트 Protected Mode 커널 전용 구조</td>
+                        <td class="hl" data-i18n="row_core">C / NASM 코어</td>
+                        <td data-i18n="row_core_64">64비트 레지스터 및 32비트 하위 호환 크로스 링커</td>
+                        <td data-i18n="row_core_32">순수 32비트 Protected Mode 커널 전용 구조</td>
                     </tr>
                 </tbody>
             </table>
@@ -312,141 +338,37 @@
     <section id="features">
         <div class="sec-header">
             <div class="sec-label">Core Capabilities</div>
-            <h2 class="sec-title">usbOS.ai만의 남다른 점</h2>
+            <h2 class="sec-title" data-i18n="features_title">usbOS.ai만의 남다른 점</h2>
         </div>
         <div class="grid-3">
             <div class="card-flat">
                 <div>
                     <div class="card-tag">01 / Hybrid Architecture</div>
-                    <h3>VirtualBox 없이 프로그램처럼 실행</h3>
-                    <p>무거운 가상머신 설치가 필요 없습니다. 윈도우 기본 가상화 엔진을 활용하여 더블 클릭 한 번으로 창 모드로 실행됩니다.</p>
+                    <h3 data-i18n="f1_title">VirtualBox 없이 프로그램처럼 실행</h3>
+                    <p data-i18n="f1_desc">무거운 가상머신 설치가 필요 없습니다. 윈도우 기본 가상화 엔진을 활용하여 더블 클릭 한 번으로 창 모드로 실행됩니다.</p>
                 </div>
             </div>
             <div class="card-flat">
                 <div>
                     <div class="card-tag">02 / Persistent Vault</div>
-                    <h3>데이터 실시간 영구 보존</h3>
-                    <p>시스템을 종료해도 입력한 API 키, 이전 대화 목록, 설정 파일이 안전한 암호화 금고에 100% 영구 저장되어 유지됩니다.</p>
+                    <h3 data-i18n="f2_title">데이터 실시간 영구 보존</h3>
+                    <p data-i18n="f2_desc">시스템을 종료해도 입력한 API 키, 이전 대화 목록, 설정 파일이 안전한 암호화 금고에 100% 영구 저장되어 유지됩니다.</p>
                 </div>
             </div>
             <div class="card-flat">
                 <div>
                     <div class="card-tag">03 / Instant Escape</div>
-                    <h3>1초 만에 윈도우 복귀</h3>
-                    <p>가상머신에 갇히지 않습니다. [절전] 버튼 클릭 한 번으로 현재 작업을 동결하고 1초 만에 윈도우 바탕화면으로 복귀합니다.</p>
+                    <h3 data-i18n="f3_title">1초 만에 윈도우 복귀</h3>
+                    <p data-i18n="f3_desc">가상머신에 갇히지 않습니다. [절전] 버튼 클릭 한 번으로 현재 작업을 동결하고 1초 만에 윈도우 바탕화면으로 복귀합니다.</p>
                 </div>
             </div>
             <div class="card-flat">
                 <div>
                     <div class="card-tag">04 / Typography & Emoji</div>
-                    <h3>8개국어 & 컬러 이모지</h3>
-                    <p>한국어, 영어, 일본어 등 8개 언어와 Unicode 15+ 컬러 이모지(⚡🧇🔥💎) 및 특수 기호를 깨짐 없이 선명하게 지원합니다.</p>
+                    <h3 data-i18n="f4_title">8개국어 & 컬러 이모지</h3>
+                    <p data-i18n="f4_desc">한국어, 영어, 일본어 등 8개 언어와 Unicode 15+ 컬러 이모지(⚡🧇🔥💎) 및 특수 기호를 깨짐 없이 선명하게 지원합니다.</p>
                 </div>
             </div>
             <div class="card-flat">
                 <div>
-                    <div class="card-tag">05 / Unlimited Models</div>
-                    <h3>무제한 AI 모델 자유 확장</h3>
-                    <p>OpenAI, Gemini, Claude뿐만 아니라 DeepSeek, Groq, 무료 로컬 Ollama까지 언제든 클릭 몇 번으로 자유롭게 연동합니다.</p>
-                </div>
-            </div>
-            <div class="card-flat">
-                <div>
-                    <div class="card-tag">06 / Native Low-Level</div>
-                    <h3>C & NASM 32비트 진단 코어</h3>
-                    <p>CPU 하드웨어 식별자(CPUID)와 컴파일러 버전을 자체 내장 어셈블리/C 코어로 직접 실시간 측정하고 검증합니다.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 3. 보안 구조 -->
-    <section id="security">
-        <div class="sec-header">
-            <div class="sec-label">Paranoid Security</div>
-            <h2 class="sec-title">군사 등급 데이터 보안</h2>
-        </div>
-        <div class="grid-3">
-            <div class="card-flat">
-                <div class="card-tag">Steganography</div>
-                <h3>보이지 않는 글자 은닉</h3>
-                <p>API 키와 비밀 정보를 'Zero-Width' 투명 유니코드 문자 속에 숨겨 암호화합니다. 메모장으로 파일을 열어도 텍스트가 전혀 보이지 않습니다.</p>
-            </div>
-            <div class="card-flat">
-                <div class="card-tag">Cryptography</div>
-                <h3>Argon2id + AES-256-GCM</h3>
-                <p>GPU 무차별 대입 해킹을 차단하는 양자 저항형 Argon2id 키 유도 알고리즘과 미군 인증 규격 AES-256 대칭키로 2중 봉인됩니다.</p>
-            </div>
-            <div class="card-flat">
-                <div class="card-tag">Isolation Sandbox</div>
-                <h3>완벽한 샌드박스 격리</h3>
-                <p>윈도우의 다른 프로그램이나 외부 악성코드가 usbOS.ai 내부의 메모리나 데이터를 절대 침범할 수 없습니다.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. 무료 가격 정책 -->
-    <section id="pricing">
-        <div class="sec-header">
-            <div class="sec-label">Transparent Economics</div>
-            <h2 class="sec-title">100% 무료 오픈소스</h2>
-        </div>
-        <div class="card-pricing">
-            <div style="font-size: 13px; font-weight: 700; color: var(--color-signal-violet); letter-spacing: 1px;">USBOS.AI COMMUNITY</div>
-            <div class="price-num">0원</div>
-            <p style="color: var(--color-ash-gray); margin-bottom: 24px;">평생 무료 • 라이선스 비용 0원 • 상업적 숨김 비용 없음</p>
-            <p style="font-size: 14px; color: var(--color-slate-gray); line-height: 1.8;">
-                usbOS.ai는 누구나 자유롭게 소스코드를 열람하고 쓸 수 있는 GNU GPL-3.0 프로젝트입니다.<br>
-                AI API 사용료는 사용자가 각 공급자(OpenAI 등)에 쓴 만큼만 직접 결제하거나 무료 모델을 연동하여 비용 없이 사용할 수 있습니다.
-            </p>
-        </div>
-    </section>
-
-    <!-- 5. 사용자가 바라는 점 (gubin0425@icloud.com 자동 전송) -->
-    <section id="feedback">
-        <div class="sec-header">
-            <div class="sec-label">Direct Communication</div>
-            <h2 class="sec-title">usbOS.ai에 바라는 점</h2>
-            <p style="color: var(--color-ash-gray); margin-top: 8px;">제출하신 내용은 개발자(gubin0425@icloud.com)에게 즉시 안전하게 자동 전송됩니다.</p>
-        </div>
-        <div class="card-form">
-            <form action="https://formsubmit.co/gubin0425@icloud.com" method="POST">
-                <input type="hidden" name="_subject" value="[usbOS.ai] 사용자의 새로운 의견이 도착했습니다!">
-                <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_template" value="table">
-
-                <div class="form-group">
-                    <label for="email">답변받으실 이메일 주소 (선택 사항)</label>
-                    <input type="email" id="email" name="email" placeholder="example@domain.com">
-                </div>
-
-                <div class="form-group">
-                    <label for="cat">제안 분야</label>
-                    <select id="cat" name="category">
-                        <option value="새로운 기능 제안">새로운 기능 제안 (Feature Request)</option>
-                        <option value="AI 모델 추가 요청">신규 AI 모델 및 API 추가 요청</option>
-                        <option value="에뮬레이터 및 게임">에뮬레이터 및 게임 호환성</option>
-                        <option value="보안 및 편의 기능">보안 및 편의 기능 개선</option>
-                        <option value="버그 제보">버그 제보 (Bug Report)</option>
-                        <option value="기타 응원">기타 문의 및 응원 메시지</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="msg">바라는 점 및 기능 제안 (*필수)</label>
-                    <textarea id="msg" name="message" rows="5" placeholder="usbOS.ai에 바라는 모든 점을 자유롭게 적어주세요..." required></textarea>
-                </div>
-
-                <button type="submit" class="btn-submit-pill">개발자에게 의견 보내기 (gubin0425@icloud.com) ↗</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 usbOS.ai Project. Crafted with gallery precision. Released under GNU GPL-3.0.</p>
-        <p style="margin-top: 6px;">문의: <a href="mailto:gubin0425@icloud.com" style="color: var(--color-signal-violet); text-decoration: none;">gubin0425@icloud.com</a></p>
-    </footer>
-
-</body>
-</html>
+                    <div class="card-tag
