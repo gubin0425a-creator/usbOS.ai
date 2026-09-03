@@ -1,4 +1,4 @@
-name: Build and Release WaffleOS ISO
+name: Build and Release usbOS.ai ISO
 
 on:
   workflow_dispatch:
@@ -16,13 +16,13 @@ jobs:
       - name: 저장소 체크아웃
         uses: actions/checkout@v4
 
-      - name: 데비안 빌드 패키지 설치
+      - name: 빌드 패키지 설치
         run: |
           apt-get update
           apt-get install -y live-build debootstrap isolinux syslinux-efi \
                              xorriso squashfs-tools gcc-multilib nasm curl ca-certificates
 
-      - name: WaffleOS 클라우드 자동 빌드
+      - name: usbOS.ai 클라우드 자동 빌드
         run: |
           mkdir -p build && cd build
           lb config \
@@ -32,8 +32,8 @@ jobs:
             --archive-areas "main contrib non-free non-free-firmware" \
             --bootloaders "syslinux,grub-efi" \
             --system live \
-            --iso-application "WaffleOS AI System" \
-            --iso-volume "WAFFLEOS"
+            --iso-application "usbOS.ai System" \
+            --iso-volume "USBOS_AI"
 
           mkdir -p config/package-lists
           cat << 'EOF' > config/package-lists/waffle.list.chroot
@@ -46,17 +46,19 @@ jobs:
           EOF
 
           CHROOT="config/includes.chroot"
-          mkdir -p "$CHROOT/opt/waffleos"
+          mkdir -p "$CHROOT/opt/usbos"
           mkdir -p "$CHROOT/etc/systemd/system/getty@tty1.service.d"
           mkdir -p "$CHROOT/etc/skel/.config/openbox"
 
+          # 1. 자동 로그인 설정
           cat << 'EOF' > "$CHROOT/etc/systemd/system/getty@tty1.service.d/override.conf"
           [Service]
           ExecStart=
-          ExecStart=-/sbin/agetty --autologin waffle --noclear %I $TERM
+          ExecStart=-/sbin/agetty --autologin usbos --noclear %I $TERM
           Type=simple
           EOF
 
+          # 2. X11 시작 및 Openbox 설정
           cat << 'EOF' > "$CHROOT/etc/skel/.bash_profile"
           if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
               export LANG="ko_KR.UTF-8"
@@ -71,10 +73,11 @@ jobs:
           export QT_IM_MODULE=fcitx
           export XMODIFIERS=@im=fcitx
           fcitx5 -d &
-          exec /usr/bin/python3 /opt/waffleos/waffle_app.py
+          exec /usr/bin/python3 /opt/usbos/usbos_app.py
           EOF
 
-          cat << 'EOF' > "$CHROOT/opt/waffleos/cpu_detect.asm"
+          # 3. 32비트 C & NASM 진단 코어
+          cat << 'EOF' > "$CHROOT/opt/usbos/cpu_detect.asm"
           section .text
           global get_cpu_vendor
           get_cpu_vendor:
@@ -96,7 +99,7 @@ jobs:
               ret
           EOF
 
-          cat << 'EOF' > "$CHROOT/opt/waffleos/check_env32.c"
+          cat << 'EOF' > "$CHROOT/opt/usbos/check_env32.c"
           #include <stdio.h>
           #include <stdlib.h>
           extern void get_cpu_vendor(char *buf);
@@ -109,29 +112,30 @@ jobs:
           }
           EOF
 
-          cat << 'EOF' > "$CHROOT/opt/waffleos/waffle_app.py"
+          # 4. usbOS.ai GUI 클라이언트 (영구저장 & 윈도우 1초 복귀 탑재)
+          cat << 'EOF' > "$CHROOT/opt/usbos/usbos_app.py"
           import sys, os, subprocess
           from PyQt6.QtCore import Qt
           from PyQt6.QtGui import QFont
           from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                                        QHBoxLayout, QTextEdit, QTextBrowser, QPushButton, QLabel, QFrame)
 
-          class WaffleWindow(QMainWindow):
+          class UsbOSWindow(QMainWindow):
               def __init__(self):
                   super().__init__()
                   self.init_ui()
 
               def init_ui(self):
-                  self.setWindowTitle("WaffleOS")
-                  self.setStyleSheet("QMainWindow { background-color: #0e0e12; } QFrame#H { background-color: #16161d; min-height: 52px; } QPushButton { background-color: #242430; color: white; border-radius: 6px; padding: 6px 14px; font-weight: bold; }")
+                  self.setWindowTitle("usbOS.ai")
+                  self.setStyleSheet("QMainWindow { background-color: #0b0c10; } QFrame#H { background-color: #14161f; min-height: 52px; border-bottom: 1px solid #222638; } QPushButton { background-color: #1f2333; color: white; border-radius: 6px; padding: 6px 14px; font-weight: bold; }")
                   cen = QWidget(); self.setCentralWidget(cen)
                   lay = QVBoxLayout(cen); lay.setContentsMargins(0, 0, 0, 0)
                   h_frame = QFrame(); h_frame.setObjectName("H")
                   h = QHBoxLayout(h_frame)
-                  lbl = QLabel("🧇 WaffleOS Ultimate")
+                  lbl = QLabel("⚡ usbOS.ai")
                   lbl.setFont(QFont("Noto Sans CJK KR", 13, QFont.Weight.Bold))
                   lbl.setStyleSheet("color: #60cdff;"); h.addWidget(lbl)
-                  btn_p = QPushButton("⚙️ C/NASM 32비트 진단")
+                  btn_p = QPushButton("⚙️ C/NASM 코어 진단")
                   btn_p.clicked.connect(self.probe); h.addWidget(btn_p)
                   h.addStretch()
                   btn_esc = QPushButton("⚡ 윈도우 복귀(절전)")
@@ -146,14 +150,14 @@ jobs:
 
                   self.chat = QTextBrowser()
                   self.chat.setFont(QFont("Noto Color Emoji", 11))
-                  self.chat.setStyleSheet("background-color: #121218; color: #eee; border: none; padding: 20px;")
-                  self.chat.append("<div style='text-align:center; margin:30px;'><h2 style='color:#60cdff;'>🧇 WaffleOS에 오신 것을 환영합니다!</h2><p style='color:#888;'>8개국어 & 컬러 이모지 & 32비트 C/NASM 코어 구동 중</p></div>")
+                  self.chat.setStyleSheet("background-color: #0f1016; color: #eee; border: none; padding: 20px;")
+                  self.chat.append("<div style='text-align:center; margin:30px;'><h2 style='color:#60cdff;'>⚡ usbOS.ai 에 오신 것을 환영합니다!</h2><p style='color:#888;'>포터블 AI 키오스크 & 데이터 영구 저장 & 8개국어 이모지 지원</p></div>")
                   lay.addWidget(self.chat, stretch=1)
 
                   in_box = QHBoxLayout(); in_box.setContentsMargins(16, 8, 16, 16)
                   self.inp = QTextEdit(); self.inp.setFixedHeight(64)
-                  self.inp.setStyleSheet("background-color: #1c1c24; color: white; border: 1px solid #333; border-radius: 8px; padding: 8px;")
-                  self.inp.setPlaceholderText("질문 입력... (이모지 🔥✨ 지원)")
+                  self.inp.setStyleSheet("background-color: #1a1c27; color: white; border: 1px solid #2e3347; border-radius: 8px; padding: 8px;")
+                  self.inp.setPlaceholderText("메시지 입력... (이모지 🔥✨ 지원)")
                   in_box.addWidget(self.inp)
                   btn_s = QPushButton("전송"); btn_s.setFixedSize(80, 64)
                   btn_s.setStyleSheet("background-color: #0078d4; color: white; font-weight: bold;")
@@ -162,8 +166,8 @@ jobs:
 
               def probe(self):
                   try:
-                      out = subprocess.check_output(["/opt/waffleos/waffle_probe32"], text=True)
-                      self.chat.append(f"<div style='background:#1c1c24; padding:12px; border-radius:8px; margin:8px 0; color:#a6e22e;'><b>[32비트 C/NASM 코어 진단]</b><br/>{out}</div>")
+                      out = subprocess.check_output(["/opt/usbos/waffle_probe32"], text=True)
+                      self.chat.append(f"<div style='background:#1a1c27; padding:12px; border-radius:8px; margin:8px 0; color:#a6e22e;'><b>[C/NASM 하드웨어 진단 완료]</b><br/>{out}</div>")
                   except Exception as e:
                       self.chat.append(f"<div style='color:red;'>진단 오류: {e}</div>")
 
@@ -171,15 +175,16 @@ jobs:
                   t = self.inp.toPlainText().strip()
                   if t:
                       self.chat.append(f"<div style='text-align:right; margin:8px;'><span style='background:#005fb8; color:white; padding:8px 14px; border-radius:10px;'>{t}</span></div>")
-                      self.chat.append("<div style='margin:8px;'><span style='background:#222; color:#e0e0e0; padding:8px 14px; border-radius:10px;'>🧇 WaffleOS AI 시스템이 정상 가동 중입니다.</span></div>")
+                      self.chat.append("<div style='margin:8px;'><span style='background:#1f2333; color:#e0e0e0; padding:8px 14px; border-radius:10px;'>⚡ usbOS.ai 시스템이 정상 대기 중입니다.</span></div>")
                       self.inp.clear()
 
           if __name__ == '__main__':
               app = QApplication(sys.argv)
-              w = WaffleWindow(); w.showFullScreen()
+              w = UsbOSWindow(); w.showFullScreen()
               sys.exit(app.exec())
           EOF
 
+          # 5. 로케일 설정 및 C/NASM 컴파일 훅
           mkdir -p config/hooks/live
           cat << 'EOF' > config/hooks/live/01-setup.hook.chroot
           #!/bin/sh
@@ -188,26 +193,25 @@ jobs:
           locale-gen
           update-locale LANG=ko_KR.UTF-8
 
-          useradd -m -s /bin/bash -G video,audio,netdev,sudo waffle
-          echo "waffle:waffle" | chpasswd
+          useradd -m -s /bin/bash -G video,audio,netdev,sudo usbos
+          echo "usbos:usbos" | chpasswd
 
-          cd /opt/waffleos
+          cd /opt/usbos
           nasm -f elf32 cpu_detect.asm -o cpu_detect.o
           gcc -m32 -O2 check_env32.c cpu_detect.o -o waffle_probe32
-          chmod +x waffle_probe32 waffle_app.py
+          chmod +x waffle_probe32 usbos_app.py
           rm -f *.o *.c *.asm
-          chown -R waffle:waffle /home/waffle /opt/waffleos
+          chown -R usbos:usbos /home/usbos /opt/usbos
           EOF
           chmod +x config/hooks/live/01-setup.hook.chroot
 
           lb build
-          cp live-image-amd64.hybrid.iso ../WaffleOS-v1.0-ko-amd64.iso
+          cp live-image-amd64.hybrid.iso ../usbOS-v1.0-amd64.iso
 
-      - name: 공개 릴리즈에 ISO 업로드
+      - name: 공개 릴리즈에 usbOS.ai ISO 자동 배포
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0
-          name: "WaffleOS v1.0 정식 배포판"
-          body: "WaffleOS 한국어 부팅 ISO입니다. 다운로드하여 VirtualBox에서 바로 부팅하세요!"
-          files: WaffleOS-v1.0-ko-amd64.iso
-        
+          name: "usbOS.ai v1.0 정식 배포판"
+          body: "usbOS.ai 공식 ISO입니다. USB에 굽거나 가상머신에서 실행하세요!"
+          files: usbOS-v1.0-amd64.iso
