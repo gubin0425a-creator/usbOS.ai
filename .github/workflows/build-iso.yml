@@ -1,0 +1,98 @@
+name: Build and Release WaffleOS ISO
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 빌드 툴 및 32비트 컴파일러 설치
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y live-build debootstrap isolinux syslinux-efi \
+                                  xorriso squashfs-tools gcc-multilib nasm
+
+      - name: WaffleOS 클라우드 자동 빌드
+        run: |
+          mkdir -p build && cd build
+          lb config \
+            --distribution bookworm \
+            --architectures amd64 \
+            --binary-images iso-hybrid \
+            --archive-areas "main contrib non-free non-free-firmware" \
+            --bootloaders "syslinux,grub-efi" \
+            --system live \
+            --iso-application "WaffleOS AI System" \
+            --iso-volume "WAFFLEOS"
+
+          mkdir -p config/package-lists
+          cat << 'EOF' > config/package-lists/waffle.list.chroot
+          linux-image-amd64 firmware-linux-free systemd-sysv locales
+          fonts-noto-cjk fonts-nanum fcitx5 fcitx5-hangul fcitx5-frontend-qt6
+          virtualbox-guest-x11 virtualbox-guest-utils xorg xinit openbox unclutter
+          systemd-resolved isc-dhcp-client ca-certificates curl
+          python3 python3-pyqt6 python3-requests gcc gcc-multilib libc6-dev-i386 nasm
+          EOF
+
+          CHROOT="config/includes.chroot"
+          mkdir -p "$CHROOT/opt/waffleos"
+          mkdir -p "$CHROOT/etc/systemd/system/getty@tty1.service.d"
+          mkdir -p "$CHROOT/etc/skel/.config/openbox"
+
+          cat << 'EOF' > "$CHROOT/etc/systemd/system/getty@tty1.service.d/override.conf"
+          [Service]
+          ExecStart=
+          ExecStart=-/sbin/agetty --autologin waffle --noclear %I $TERM
+          Type=simple
+          EOF
+
+          cat << 'EOF' > "$CHROOT/etc/skel/.bash_profile"
+          if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+              export LANG="ko_KR.UTF-8"
+              exec startx -- -nocursor
+          fi
+          EOF
+
+          cat << 'EOF' > "$CHROOT/etc/skel/.config/openbox/autostart"
+          VBoxClient-all &
+          unclutter -idle 3 &
+          export GTK_IM_MODULE=fcitx
+          export QT_IM_MODULE=fcitx
+          export XMODIFIERS=@im=fcitx
+          fcitx5 -d &
+          EOF
+
+          mkdir -p config/hooks/live
+          cat << 'EOF' > config/hooks/live/01-setup.hook.chroot
+          #!/bin/sh
+          set -e
+          sed -i -e 's/# ko_KR.UTF-8 UTF-8/ko_KR.UTF-8 UTF-8/' /etc/locale.gen
+          locale-gen
+          update-locale LANG=ko_KR.UTF-8
+          useradd -m -s /bin/bash -G video,audio,netdev,sudo waffle
+          echo "waffle:waffle" | chpasswd
+          chown -R waffle:waffle /home/waffle
+          EOF
+          chmod +x config/hooks/live/01-setup.hook.chroot
+
+          sudo lb build
+          mv live-image-amd64.hybrid.iso WaffleOS-v1.0-ko-amd64.iso
+
+      - name: 공개 릴리즈 페이지에 ISO 자동 업로드
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        with:
+          tag_name: v1.0
+          name: "WaffleOS v1.0 정식 배포판"
+          body: |
+            ## 🧇 WaffleOS v1.0 (Korean Edition)
+            - **미니멀 AI OS**: 다크 모드 키오스크 및 한국어 기본 탑재
+            - **다운로드**: 아래 WaffleOS-v1.0-ko-amd64.iso 파일을 다운로드하여 VirtualBox에서 바로 부팅하세요!
+          files: build/WaffleOS-v1.0-ko-amd64.isO
