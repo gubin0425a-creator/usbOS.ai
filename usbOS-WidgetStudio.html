@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>usbOS.ai — Widget Studio Core</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0a0b10;
+            --surface-tool: #13151f;
+            --surface-card: rgba(22, 25, 38, 0.75);
+            --border: rgba(255, 255, 255, 0.15);
+            --accent: #5f79ff;
+            --mint: #01fe93;
+            --v3-blue: #0066cc;
+            --text-main: #f5f6fa;
+            --text-sub: #8e95a5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-base); color: var(--text-main);
+            font-family: 'Noto Sans KR', sans-serif; min-height: 100vh;
+            display: flex; flex-direction: column; overflow-x: hidden;
+        }
+
+        /* System Header */
+        header {
+            background: rgba(19, 21, 31, 0.9); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); padding: 12px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo-box { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 16px; }
+        .badge-core { background: #3b1b1b; border: 1px solid #732626; color: #ff9999; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: bold; }
+
+        /* Main Workspace: Split Editor & Desktop Canvas */
+        .workspace { display: flex; flex: 1; height: calc(100vh - 54px); }
+        @media (max-width: 900px) { .workspace { flex-direction: column; height: auto; } }
+
+        /* Left Side: Customizer Tool (절대 지울 수 없는 기본 프로그램) */
+        .panel-editor {
+            width: 440px; background: var(--surface-tool); border-right: 1px solid var(--border);
+            padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;
+        }
+        @media (max-width: 900px) { .panel-editor { width: 100%; } }
+
+        .sec-title { font-size: 14px; font-weight: 700; color: var(--mint); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+
+        /* 100 Color Matrix (10x10) */
+        .color-matrix { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; background: #0c0d13; padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
+        .color-cell {
+            width: 100%; aspect-ratio: 1; border-radius: 4px; cursor: pointer; border: 1px solid rgba(0,0,0,0.3); transition: transform 0.1s;
+        }
+        .color-cell:hover { transform: scale(1.3); z-index: 10; outline: 2px solid white; }
+
+        /* Controls */
+        .form-ctrl { display: flex; flex-direction: column; gap: 6px; }
+        .form-ctrl label { font-size: 12px; color: var(--text-sub); font-weight: 600; }
+        select, input {
+            background: #1c1f2e; border: 1px solid var(--border); color: #fff;
+            padding: 10px 14px; border-radius: 10px; font-size: 13px; outline: none;
+        }
+
+        /* Action Buttons */
+        .btn-add { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: background 0.15s; }
+        .btn-add:hover { background: #4d67eb; }
+
+        /* Right Side: Desktop Canvas with Collision Grid */
+        .panel-canvas {
+            flex: 1; padding: 30px; background: radial-gradient(circle at top right, #1c2033 0%, #0a0b10 100%);
+            display: flex; flex-direction: column; gap: 20px; overflow-y: auto;
+        }
+        .canvas-bar { display: flex; justify-content: space-between; align-items: center; }
+        .btn-tidy { background: #222738; border: 1px solid var(--border); color: var(--mint); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-tidy:hover { background: var(--mint); color: #000; }
+
+        /* Widget Grid Slots (Total 8 max desktop capacity) */
+        .desktop-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px; min-height: 480px; align-content: start;
+        }
+
+        /* Widget Item Card */
+        .widget-item {
+            background: var(--surface-card); backdrop-filter: blur(25px); border: 1px solid var(--border);
+            border-radius: 20px; padding: 20px; min-height: 160px; display: flex; flex-direction: column;
+            justify-content: space-between; position: relative; box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .btn-remove { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 12px; }
+        .btn-remove:hover { background: #ff4d4d; }
+
+        /* V3 Security Banner */
+        .v3-card {
+            background: linear-gradient(135deg, #091f3a, #0e1626); border: 1px solid #1a4d8c;
+            border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-box">
+            <span>⚡ usbOS.ai 위젯 스튜디오</span>
+            <span class="badge-core">기본 내장 시스템 프로그램 (삭제 불가)</span>
+        </div>
+        <div style="font-size: 13px; color: var(--text-sub);">
+            바탕화면 잔여 공간: <span id="slotCount" style="color:var(--mint); font-weight:bold;">6</span> / 8 슬롯
+        </div>
+    </header>
+
+    <div class="workspace">
+
+        <!-- 1. 위젯 제작기 (커스터마이저) -->
+        <div class="panel-editor">
+            <div>
+                <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">🎨 나만의 위젯 제작기</h2>
+                <p style="font-size: 12px; color: var(--text-sub);">다운로드 전에 색상과 글자 배치를 완벽히 세팅하세요.</p>
+            </div>
+
+            <!-- 위젯 종류 선택 -->
+            <div class="form-ctrl">
+                <label>5대 위젯 종류</label>
+                <select id="wType" onchange="updatePreview()">
+                    <option value="clock">🕒 1. 스위스 시계 & 캘린더</option>
+                    <option value="weather">🌤️ 2. 다이내믹 실시간 날씨</option>
+                    <option value="game">🎮 3. 원클릭 게임 & 앱 덱</option>
+                    <option value="ai">🤖 4. AI 퀵 프롬프트 (바탕화면 답변)</option>
+                    <option value="hw">⚡ 5. TUF 시스템 하드웨어 게이지</option>
+                </select>
+            </div>
+
+            <!-- 10대 디자인 테마 프리셋 -->
+            <div class="form-ctrl">
+                <label>10종류 디자인 테마 프리셋</label>
+                <select id="wTheme" onchange="applyPreset(this.value)">
+                    <option value="apple">1. Apple Frosted Glass (애플 반투명)</option>
+                    <option value="cyber">2. Cyberpunk 2077 (사이버 네온)</option>
+                    <option value="tuf">3. TUF Gaming Gold (메카닉 골드)</option>
+                    <option value="mint">4. Arctic Mint (북극 민트)</option>
+                    <option value="tokyo">5. Tokyo Midnight (도쿄 미드나잇)</option>
+                    <option value="monokai">6. Monokai Matrix (에메랄드 매트릭스)</option>
+                    <option value="sunset">7. Sunset Coral (노을 코랄)</option>
+                    <option value="stealth">8. Stealth Matte (스텔스 블랙)</option>
+                    <option value="retro">9. Retro 8-bit (고전 아케이드)</option>
+                    <option value="luxury">10. Pure Diamond (퓨어 다이아)</option>
+                </select>
+            </div>
+
+            <!-- 10x10 = 100가지 색상 매트릭스 -->
+            <div class="form-ctrl">
+                <label>100가지 색상 매트릭스 (10×10 클릭하여 선택)</label>
+                <div class="color-matrix" id="matrix100"></div>
+                <div style="font-size: 11px; color: var(--text-sub); display:flex; justify-content:space-between; margin-top:2px;">
+                    <span>현재 선택된 색상:</span>
+                    <span id="curColorHex" style="font-weight:bold; color:var(--accent);">#5f79ff</span>
+                </div>
+            </div>
+
+            <!-- 글자 배치 및 폰트 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-ctrl">
+                    <label>글자 배치</label>
+                    <select id="wAlign" onchange="updatePreview()">
+                        <option value="left">왼쪽 정렬</option>
+                        <option value="center" selected>가운데 정렬</option>
+                        <option value="right">오른쪽 정렬</option>
+                    </select>
+                </div>
+                <div class="form-ctrl">
+                    <label>글씨체</label>
+                    <select id="wFont" onchange="updatePreview()">
+                        <option value="'Noto Sans KR', sans-serif">모던 산세리프</option>
+                        <option value="'JetBrains Mono', monospace">사이버 모노</option>
+                        <option value="'Playfair Display', serif">애플 클래식 세리프</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 완료 후 바탕화면 추가 버튼 -->
+            <button class="btn-add" onclick="addWidgetToDesktop()">✨ 설정 완료 후 바탕화면에 추가 (+)</button>
+        </div>
+
+        <!-- 2. 바탕화면 작업 공간 (공간 충돌 감지 & 자동 정리) -->
+        <div class="panel-canvas">
+            
+            <!-- 상단 AhnLab V3 기본 백신 카드 -->
+            <div class="v3-card">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 26px;">🛡️</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 14px; color: #66b3ff;">AhnLab V3 Lite 엔진 실시간 보호 가동 중</div>
+                        <div style="font-size: 12px; color: #a6c8e0;">시스템 위협: 0개 감지 • 클라우드 평판 감시 활성화 • usbOS.ai 보호됨</div>
+                    </div>
+                </div>
+                <span style="background: #004d26; color: #4ade80; font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: bold;">안전</span>
+            </div>
+
+            <div class="canvas-bar">
+                <h3 style="font-size: 16px; font-weight: 700;">🖥️ 내 윈도우 바탕화면 위젯 배치 영역</h3>
+                <button class="btn-tidy" onclick="autoTidyWidgets()">🧹 위젯 자동 정리 프로그램 실행</button>
+            </div>
+
+            <!-- 동적 위젯 배치 그리드 -->
+            <div class="desktop-grid" id="desktopGrid"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const MAX_SLOTS = 8;
+        let activeWidgets = [];
+        let curColor = '#5f79ff';
+
+        // 1. Generate 100 Color Matrix (10 Hue Categories x 10 Shades)
+        const hues = [0, 24, 45, 140, 175, 215, 235, 280, 320, 0];
+        const matrix = document.getElementById('matrix100');
+        
+        for (let row = 0; row < 10; row++) {
+            const h = hues[row];
+            for (let col = 0; col < 10; col++) {
+                const s = row === 9 ? 0 : 90;
+                const l = 15 + col * 8;
+                const hex = `hsl(${h}, ${s}%, ${l}%)`;
+                const cell = document.createElement('div');
+                cell.className = 'color-cell';
+                cell.style.backgroundColor = hex;
+                cell.onclick = () => {
+                    curColor = hex;
+                    document.getElementById('curColorHex').innerText = hex;
+                    document.getElementById('curColorHex').style.color = hex;
+                };
+                matrix.appendChild(cell);
+            }
+        }
+
+        // 2. 10 Design Presets
+        function applyPreset(val) {
+            const pMap = {
+                apple: '#5f79ff', cyber: '#fcee0a', tuf: '#ffb900', mint: '#01fe93',
+                tokyo: '#ff007f', monokai: '#a6e22e', sunset: '#ff5e3a', stealth: '#888888',
+                retro: '#00ffff', luxury: '#ffffff'
+            };
+            curColor = pMap[val] || '#5f79ff';
+            document.getElementById('curColorHex').innerText = curColor;
+            document.getElementById('curColorHex').style.color = curColor;
+        }
+
+        // 3. Add Widget (With Free Space / Collision Check!)
+        function addWidgetToDesktop() {
+            if (activeWidgets.length >= MAX_SLOTS) {
+                alert("⚠️ [공간 부족] 바탕화면에 빈 공간이 없습니다!\n기존 위젯을 지우거나 [위젯 자동 정리 프로그램]을 실행해 공간을 확보하세요.");
+                return;
+            }
+
+            const type = document.getElementById('wType').value;
+            const align = document.getElementById('wAlign').value;
+            const font = document.getElementById('wFont').value;
+            const id = 'w_' + Date.now();
+
+            const item = { id, type, align, font, color: curColor };
+            activeWidgets.push(item);
+            renderGrid();
+        }
+
+        function removeWidget(id) {
+            activeWidgets = activeWidgets.filter(w => w.id !== id);
+            renderGrid();
+        }
+
+        // 4. Auto-Tidy Engine (자동 정리 프로그램)
+        function autoTidyWidgets() {
+            if (activeWidgets.length === 0) {
+                alert("정리할 위젯이 없습니다!");
+                return;
+            }
+            activeWidgets.sort((a, b) => a.type.localeCompare(b.type));
+            renderGrid();
+            alert("✨ [자동 정리 완료] 모든 위젯이 가장 완벽한 윈도우 그리드로 빈틈없이 정렬되었습니다!");
+        }
+
+        // 5. Render Desktop Grid
+        function renderGrid() {
+            const grid = document.getElementById('desktopGrid');
+            grid.innerHTML = '';
+            document.getElementById('slotCount').innerText = MAX_SLOTS - activeWidgets.length;
+
+            activeWidgets.forEach(w => {
+                const card = document.createElement('div');
+                card.className = 'widget-item';
+                card.style.textAlign = w.align;
+                card.style.fontFamily = w.font;
+                card.style.borderColor = w.color;
+
+                let content = '';
+                if(w.type === 'clock') content = `<span style="color:${w.color}; font-size:12px; font-weight:bold;">🕒 스위스 시계 & 캘린더</span><div style="font-size:32px; font-weight:900; margin:10px 0;">19:25:00</div><div style="font-size:12px; color:var(--text-sub);">9월 3일 수요일</div>`;
+                if(w.type === 'weather') content = `<span style="color:${w.color}; font-size:12px; font-weight:bold;">🌤️ 실시간 날씨</span><div style="font-size:36px; font-weight:900; margin:10px 0;">24°C ☀️</div><div style="font-size:12px; color:var(--mint);">서울 맑음 • 미세먼지 최고좋음</div>`;
+                if(w.type === 'game') content = `<span style="color:${w.color}; font-size:12px; font-weight:bold;">🎮 게임 & 엔터 덱</span><div style="display:flex; gap:6px; justify-content:${w.align}; margin-top:14px;"><button style="padding:6px 12px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff;">로블록스</button><button style="padding:6px 12px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid #444; color:#fff;">스팀</button></div>`;
+                if(w.type === 'ai') content = `<span style="color:${w.color}; font-size:12px; font-weight:bold;">🤖 AI 퀵 프롬프트</span><div style="margin:10px 0; background:rgba(0,0,0,0.3); padding:8px; border-radius:8px; font-size:12px;">"바탕화면에서 1초 답변 완료"</div>`;
+                if(w.type === 'hw') content = `<span style="color:${w.color}; font-size:12px; font-weight:bold;">⚡ TUF 하드웨어 게이지</span><div style="font-size:24px; font-weight:bold; color:${w.color}; margin:10px 0;">CPU 32% | RAM 45%</div><div style="font-size:11px; color:var(--text-sub);">GPU 51°C 정상</div>`;
+
+                card.innerHTML = `<button class="btn-remove" onclick="removeWidget('${w.id}')">×</button>` + content;
+                grid.appendChild(card);
+            });
+        }
+
+        // Default initial items
+        addWidgetToDesktop();
+    </script>
+
+</body>
+</html>
