@@ -371,4 +371,250 @@
             </div>
             <div class="card-flat">
                 <div>
-                    <div class="card-tag
+                    <div class="card-tag">05 / Unlimited Models</div>
+                    <h3 data-i18n="f5_title">무제한 AI 모델 자유 확장</h3>
+                    <p data-i18n="f5_desc">OpenAI, Gemini, Claude뿐만 아니라 DeepSeek, Groq, 무료 로컬 Ollama까지 언제든 클릭 몇 번으로 자유롭게 연동합니다.</p>
+                </div>
+            </div>
+            <div class="card-flat">
+                <div>
+                    <div class="card-tag">06 / Native Low-Level</div>
+                    <h3 data-i18n="f6_title">C & NASM 32비트 진단 코어</h3>
+                    <p data-i18n="f6_desc">CPU 하드웨어 식별자(CPUID)와 컴파일러 버전을 자체 내장 어셈블리/C 코어로 직접 실시간 측정하고 검증합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 보안 구조 -->
+    <section id="security">
+        <div class="sec-header">
+            <div class="sec-label">Paranoid Security</div>
+            <h2 class="sec-title" data-i18n="sec_title">군사 등급 데이터 보안</h2>
+        </div>
+        <div class="grid-3">
+            <div class="card-flat">
+                <div class="card-tag">Steganography</div>
+                <h3 data-i18n="s1_title">보이지 않는 글자 은닉</h3>
+                <p data-i18n="s1_desc">API 키와 비밀 정보를 'Zero-Width' 투명 유니코드 문자 속에 숨겨 암호화합니다. 메모장으로 파일을 열어도 텍스트가 전혀 보이지 않습니다.</p>
+            </div>
+            <div class="card-flat">
+                <div class="card-tag">Cryptography</div>
+                <h3 data-i18n="s2_title">Argon2id + AES-256-GCM</h3>
+                <p data-i18n="s2_desc">GPU 무차별 대입 해킹을 차단하는 양자 저항형 Argon2id 키 유도 알고리즘과 미군 인증 규격 AES-256 대칭키로 2중 봉인됩니다.</p>
+            </div>
+            <div class="card-flat">
+                <div class="card-tag">Isolation Sandbox</div>
+                <h3 data-i18n="s3_title">완벽한 샌드박스 격리</h3>
+                <p data-i18n="s3_desc">윈도우의 다른 프로그램이나 외부 악성코드가 usbOS.ai 내부의 메모리나 데이터를 절대 침범할 수 없습니다.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 무료 가격 정책 -->
+    <section id="pricing">
+        <div class="sec-header">
+            <div class="sec-label">Transparent Economics</div>
+            <h2 class="sec-title" data-i18n="price_sec_title">100% 무료 오픈소스</h2>
+        </div>
+        <div class="card-pricing">
+            <div style="font-size: 13px; font-weight: 700; color: var(--color-signal-violet); letter-spacing: 1px;">USBOS.AI COMMUNITY</div>
+            <div class="price-num" data-i18n="price_zero">0원</div>
+            <p style="color: var(--color-ash-gray); margin-bottom: 24px;" data-i18n="price_sub">평생 무료 • 라이선스 비용 0원 • 상업적 숨김 비용 없음</p>
+            <p style="font-size: 14px; color: var(--color-slate-gray); line-height: 1.8;" data-i18n="price_desc">
+                usbOS.ai는 누구나 자유롭게 소스코드를 열람하고 쓸 수 있는 GNU GPL-3.0 프로젝트입니다.<br>
+                AI API 사용료는 사용자가 각 공급자(OpenAI 등)에 쓴 만큼만 직접 결제하거나 무료 모델을 연동하여 비용 없이 사용할 수 있습니다.
+            </p>
+        </div>
+    </section>
+
+    <!-- 5. 사용자가 바라는 점 (gubin0425@icloud.com 자동 전송) -->
+    <section id="feedback">
+        <div class="sec-header">
+            <div class="sec-label">Direct Communication</div>
+            <h2 class="sec-title" data-i18n="fb_title">usbOS.ai에 바라는 점</h2>
+            <p style="color: var(--color-ash-gray); margin-top: 8px;" data-i18n="fb_subtitle">제출하신 내용은 개발자(gubin0425@icloud.com)에게 즉시 안전하게 자동 전송됩니다.</p>
+        </div>
+        <div class="card-form">
+            <form action="https://formsubmit.co/gubin0425@icloud.com" method="POST">
+                <input type="hidden" name="_subject" value="[usbOS.ai] 사용자의 새로운 의견이 도착했습니다!">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+
+                <div class="form-group">
+                    <label for="email" data-i18n="lbl_email">답변받으실 이메일 주소 (선택 사항)</label>
+                    <input type="email" id="email" name="email" placeholder="example@domain.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="cat" data-i18n="lbl_cat">제안 분야</label>
+                    <select id="cat" name="category">
+                        <option value="새로운 기능 제안" data-i18n="opt_1">새로운 기능 제안 (Feature Request)</option>
+                        <option value="AI 모델 추가 요청" data-i18n="opt_2">신규 AI 모델 및 API 추가 요청</option>
+                        <option value="에뮬레이터 및 게임" data-i18n="opt_3">에뮬레이터 및 게임 호환성</option>
+                        <option value="보안 및 편의 기능" data-i18n="opt_4">보안 및 편의 기능 개선</option>
+                        <option value="버그 제보" data-i18n="opt_5">버그 제보 (Bug Report)</option>
+                        <option value="기타 응원" data-i18n="opt_6">기타 문의 및 응원 메시지</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="msg" data-i18n="lbl_msg">바라는 점 및 기능 제안 (*필수)</label>
+                    <textarea id="msg" name="message" rows="5" placeholder="usbOS.ai에 바라는 모든 점을 자유롭게 적어주세요..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit-pill" data-i18n="btn_send">개발자에게 의견 보내기 (gubin0425@icloud.com) ↗</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 usbOS.ai Project. Crafted with gallery precision. Released under GNU GPL-3.0.</p>
+        <p style="margin-top: 6px;">Contact: <a href="mailto:gubin0425@icloud.com" style="color: var(--color-signal-violet); text-decoration: none;">gubin0425@icloud.com</a></p>
+    </footer>
+
+    <!-- Multi-Language Auto-Detection & Dictionary Engine -->
+    <script>
+        const i18nData = {
+            en: {
+                nav_compare: "Editions", nav_features: "Features", nav_security: "Security", nav_pricing: "Pricing", nav_feedback: "Feedback", nav_download: "Download ↗",
+                hero_badge: "v1.0.0 Official Release",
+                hero_title: "Your Private AI.<br><i>Operating</i> in your pocket.",
+                hero_desc: "Runs like an app in 1 second without installing VirtualBox. A next-gen portable AI OS with encrypted persistent storage, 8 languages, Unicode 15+ emojis, and 32-bit C/NASM native core.",
+                btn_dl_64: "Download 64-bit (Windows 10/11) ↗", btn_dl_32: "32-bit Legacy Edition",
+                hero_sub_note: "100% Free Open Source • GNU GPL-3.0 • Standalone USB Boot Supported",
+                compare_title: "64-bit &bull; 32-bit Edition Comparison",
+                th_item: "Criteria", th_64: "usbOS.ai 64-bit (Windows Recommended)", th_32: "usbOS.ai 32-bit (Legacy & Embedded)",
+                row_target: "Recommended Devices", row_target_64: "Modern Desktops, Laptops, Windows 10 & 11 PCs", row_target_32: "Older Netbooks, 32-bit PCs, Embedded Hardware",
+                row_ram: "Minimum RAM", row_ram_64: "2 GB ~ 4 GB or higher", row_ram_32: "Lightweight and nimble even on 512 MB ~ 1 GB",
+                row_storage: "Data Persistence", row_storage_64: "Full Encrypted Vault Persistence", row_storage_32: "Full Encrypted Vault Persistence",
+                row_apps: "Everyday Ecosystem", row_apps_64: "Chromium 4K, 3D High-End Emulators", row_apps_32: "Light Web Browsing & 2D Retro Games",
+                row_core: "C / NASM Core", row_core_64: "64-bit Registers & 32-bit Cross Linker", row_core_32: "Pure 32-bit Protected Mode Kernel",
+                features_title: "What Makes usbOS.ai Unique",
+                f1_title: "Run as an App without VirtualBox", f1_desc: "No bulky hypervisor installation. Boots in a window via native Windows engine.",
+                f2_title: "Real-time Data Persistence", f2_desc: "Your API keys, chat histories, and settings stay permanently safe in an encrypted vault.",
+                f3_title: "1-Second Escape to Windows", f3_desc: "Never trapped. Freeze work and escape to Windows desktop with one click.",
+                f4_title: "8 Languages & Color Emojis", f4_desc: "Native support for Korean, English, Japanese, Chinese, and Unicode 15+ emojis (⚡🧇🔥💎).",
+                f5_title: "Unlimited AI Models", f5_desc: "Seamless integration with OpenAI, Gemini, Claude, DeepSeek, Groq, and local Ollama.",
+                f6_title: "C & NASM 32-bit Hardware Core", f6_desc: "Direct CPUID and compiler diagnostic suite compiled at the bare-metal layer.",
+                sec_title: "Military-Grade Data Security",
+                s1_title: "Zero-Width Unicode Steganography", s1_desc: "Hides API keys in invisible Unicode characters. Even opening the file shows nothing.",
+                s2_title: "Argon2id + AES-256-GCM", s2_desc: "Double-sealed with quantum-resistant key derivation and military AES-256 encryption.",
+                s3_title: "Isolated Sandbox", s3_desc: "Host malware or programs cannot access usbOS.ai memory.",
+                price_sec_title: "100% Free Open Source", price_zero: "$0", price_sub: "Lifetime Free • No License Fees • No Hidden Costs",
+                price_desc: "usbOS.ai is GNU GPL-3.0 licensed. AI costs are paid directly to providers per usage, or use free local models.",
+                fb_title: "What would you like to see in usbOS.ai?",
+                fb_subtitle: "Your suggestion will be securely sent directly to the developer (gubin0425@icloud.com).",
+                lbl_email: "Your Email (Optional)", lbl_cat: "Category", opt_1: "Feature Request", opt_2: "New AI Model Request", opt_3: "Gaming & Emulators", opt_4: "Security & Usability", opt_5: "Bug Report", opt_6: "Other Support",
+                lbl_msg: "Your Wishlist & Suggestions (*Required)", btn_send: "Send Feedback to Developer (gubin0425@icloud.com) ↗"
+            },
+            ja: {
+                nav_compare: "エディション比較", nav_features: "特徴と強み", nav_security: "セキュリティ", nav_pricing: "価格", nav_feedback: "ご意見", nav_download: "ダウンロード ↗",
+                hero_badge: "v1.0.0 公式リリース",
+                hero_title: "Your Private AI.<br><i>Operating</i> in your pocket.",
+                hero_desc: "VirtualBox不要でWindowsアプリのように1秒で起動・終了。暗号化された永続ストレージ、8言語対応、Unicode 15+ カラー絵文字、32ビットC/NASMネイティブコアを搭載。",
+                btn_dl_64: "64ビット版ダウンロード (Windows 10/11) ↗", btn_dl_32: "32ビット版 (低スペックPC用)",
+                hero_sub_note: "完全無料オープンソース • GNU GPL-3.0 • インストール不要USBブート対応",
+                compare_title: "64-bit &bull; 32-bit エディション比較",
+                th_item: "比較項目", th_64: "usbOS.ai 64-bit (Windows推奨)", th_32: "usbOS.ai 32-bit (レガシー＆組み込み)",
+                row_target: "推奨環境", row_target_64: "最新デスクトップ、ノートPC、Windows 10 & 11", row_target_32: "旧型ネットブック、32bit専用機、学習用組込み機",
+                row_ram: "推奨RAM", row_ram_64: "2 GB ~ 4 GB 以上", row_ram_32: "512 MB ~ 1 GB でも快適に動作",
+                row_storage: "データ永続化", row_storage_64: "暗号化ボールト完全保存", row_storage_32: "暗号化ボールト完全保存",
+                row_apps: "日常アプリ", row_apps_64: "Chromium 4K、3D高画質エミュレータ", row_apps_32: "軽量Web検索、2Dレトロゲーム",
+                row_core: "C / NASM コア", row_core_64: "64ビットレジスタ＆32ビット下位互換", row_core_32: "純粋な32ビットプロテクトモード専用",
+                features_title: "usbOS.aiだけの特別な強み",
+                f1_title: "VirtualBox不要、アプリ感覚で起動", f1_desc: "仮想マシンのインストール不要。Windows標準エンジンで軽量ウィンドウ起動。",
+                f2_title: "リアルタイムデータ永続保存", f2_desc: "APIキーや会話履歴、設定ファイルが暗号化ボールトに100%安全に保存されます。",
+                f3_title: "1秒でWindowsに復帰", f3_desc: "作業を一時停止し、ワンクリックで瞬時にWindowsデスクトップに戻れます。",
+                f4_title: "8言語＆カラー絵文字ネイティブ対応", f4_desc: "日本語、韓国語、英語など8言語と最新カラー絵文字（⚡🧇🔥💎）を完全サポート。",
+                f5_title: "AIモデル無制限拡張", f5_desc: "OpenAI、Gemini、Claude、DeepSeek、無料ローカルOllamaまで簡単連携。",
+                f6_title: "C & NASM 32ビット診断コア", f6_desc: "CPU識別子（CPUID）とコンパイラをアセンブリ/Cコードで直接測定・検証。",
+                sec_title: "軍用レベルのデータ暗号化",
+                s1_title: "見えない文字（Zero-Width）隠蔽技術", s1_desc: "APIキーを透明な特殊文字に隠して暗号化。メモ帳で開いても何も見えません。",
+                s2_title: "Argon2id + AES-256-GCM", s2_desc: "耐量子計算アルゴリズムと軍用AES-256規格で2重ロック。",
+                s3_title: "完全サンドボックス隔離", s3_desc: "ホストのマルウェアがusbOS.aiの内部メモリにアクセスすることはできません。",
+                price_sec_title: "100% 完全無料オープンソース", price_zero: "0円", price_sub: "永久無料 • ライセンス費用なし • 隠れたコストなし",
+                price_desc: "GNU GPL-3.0ライセンス。AI利用料はプロバイダへの実費または無料モデルを利用可能。",
+                fb_title: "usbOS.aiに期待する機能",
+                fb_subtitle: "送信された内容は開発者（gubin0425@icloud.com）に安全に自動送信されます。",
+                lbl_email: "返信先メールアドレス（任意）", lbl_cat: "カテゴリ", opt_1: "新機能リクエスト", opt_2: "AIモデル追加希望", opt_3: "ゲーム・エミュレータ", opt_4: "セキュリティ向上", opt_5: "バグ報告", opt_6: "その他メッセージ",
+                lbl_msg: "ご要望・機能提案（*必須）", btn_send: "開発者に送信する (gubin0425@icloud.com) ↗"
+            },
+            zh: {
+                nav_compare: "版本对比", nav_features: "核心特色", nav_security: "数据安全", nav_pricing: "价格政策", nav_feedback: "用户建议", nav_download: "立即下载 ↗",
+                hero_badge: "v1.0.0 正式发布版",
+                hero_title: "Your Private AI.<br><i>Operating</i> in your pocket.",
+                hero_desc: "无需安装 VirtualBox，像普通 Windows 软件一样 1 秒启动。配备加密持久化存储、8 国语言、Unicode 15+ 彩色表情及 32 位 C/NASM 原生内核。",
+                btn_dl_64: "下载 64 位版本 (Windows 10/11) ↗", btn_dl_32: "32 位旧设备版本",
+                hero_sub_note: "完全免费开源 • GNU GPL-3.0 • 免安装 U 盘即插即用",
+                compare_title: "64-bit &bull; 32-bit 版本详细对比",
+                th_item: "对比项目", th_64: "usbOS.ai 64-bit (Windows 推荐)", th_32: "usbOS.ai 32-bit (老旧电脑与嵌入式)",
+                row_target: "推荐设备", row_target_64: "现代台式机、笔记本、Windows 10 & 11", row_target_32: "旧款上网本、32 位纯硬件、嵌入式教学设备",
+                row_ram: "最低内存", row_ram_64: "2 GB ~ 4 GB 以上", row_ram_32: "512 MB ~ 1 GB 依然轻快敏捷",
+                row_storage: "数据持久化", row_storage_64: "全加密金库持久保存", row_storage_32: "全加密金库持久保存",
+                row_apps: "日常生态", row_apps_64: "Chromium 4K 播放、高清 3D 模拟器", row_apps_32: "轻量网页浏览、2D 怀旧街机游戏",
+                row_core: "C / NASM 内核", row_core_64: "64 位寄存器与 32 位向下兼容交叉连接", row_core_32: "纯 32 位保护模式内核专用架构",
+                features_title: "usbOS.ai 的与众不同之处",
+                f1_title: "无需虚拟机，像软件般秒开", f1_desc: "免除繁琐的虚拟机安装，调用系统原生虚拟化，单窗口运行。",
+                f2_title: "数据实时安全持久保存", f2_desc: "退出后 API 密钥与聊天记录完整保存在本地 AES-256 加密金库中。",
+                f3_title: "1 秒快速切回 Windows", f3_desc: "绝不被系统束缚，点击休眠按钮瞬间返回 Windows 桌面。",
+                f4_title: "8 国语言与彩色 Emoji 支持", f4_desc: "中英日韩等 8 种语言与 Unicode 15+ 表情符号（⚡🧇🔥💎）原生渲染。",
+                f5_title: "无限制拓展 AI 模型", f5_desc: "自由接入 OpenAI、Gemini、Claude、DeepSeek 及本地免费 Ollama。",
+                f6_title: "C & NASM 32 位硬件诊断内核", f6_desc: "汇编与 C 语言直接读取 CPUID 并在系统内实时检测编译器。",
+                sec_title: "军工级数据防护体系",
+                s1_title: "零宽隐写隐蔽技术", s1_desc: "将 API 秘钥隐匿于透明 Unicode 字符中，用记事本打开空无一物。",
+                s2_title: "Argon2id + AES-256-GCM", s2_desc: "抗量子暴力破解密钥推导与军用级对称双重加密。",
+                s3_title: "完整硬件隔离沙盒", s3_desc: "宿主机的恶意程序无法渗透或窥探 usbOS.ai 内部内存。",
+                price_sec_title: "100% 永久免费开源", price_zero: "¥0", price_sub: "终身免费 • 零授权费用 • 绝无隐性收费",
+                price_desc: "遵循 GNU GPL-3.0 协议开源。AI 费用由用户直接按量付给厂商，亦可完全免费使用本地离线模型。",
+                fb_title: "对 usbOS.ai 的期待与建议",
+                fb_subtitle: "提交的内容将安全直达开发者邮箱 (gubin0425@icloud.com)。",
+                lbl_email: "您的联系邮箱（选填）", lbl_cat: "反馈分类", opt_1: "新功能建议", opt_2: "请求新增 AI 模型", opt_3: "游戏与模拟器", opt_4: "安全与交互优化", opt_5: "问题反馈 (Bug)", opt_6: "其他留言",
+                lbl_msg: "您的建议与愿望清单（*必填）", btn_send: "发送反馈给开发者 (gubin0425@icloud.com) ↗"
+            }
+        };
+
+        // Automatic Language Detection Engine
+        function changeLanguage(lang) {
+            const data = i18nData[lang] || i18nData['en'];
+            if (lang === 'ko') {
+                location.reload(); // Revert to pristine Korean
+                return;
+            }
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (data && data[key]) {
+                    el.innerHTML = data[key];
+                }
+            });
+            document.getElementById('langSelect').value = lang;
+            localStorage.setItem('usbos_lang', lang);
+        }
+
+        // Auto-detect visitor's device language & nationality on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('usbos_lang');
+            if (saved) {
+                if (saved !== 'ko') changeLanguage(saved);
+                return;
+            }
+
+            const raw = (navigator.language || navigator.userLanguage || 'ko').toLowerCase();
+            let matched = 'ko';
+            if (raw.startsWith('ja')) matched = 'ja';
+            else if (raw.startsWith('zh')) matched = 'zh';
+            else if (raw.startsWith('es')) matched = 'es';
+            else if (raw.startsWith('fr')) matched = 'fr';
+            else if (raw.startsWith('de')) matched = 'de';
+            else if (raw.startsWith('ru')) matched = 'ru';
+            else if (!raw.startsWith('ko')) matched = 'en';
+
+            if (matched !== 'ko') {
+                changeLanguage(matched);
+            }
+        });
+    </script>
+
+</body>
+</html>
