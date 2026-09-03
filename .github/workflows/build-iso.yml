@@ -2,22 +2,25 @@ name: Build and Release WaffleOS ISO
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: debian:bookworm
+      options: --privileged
     steps:
-      - name: 저장소 코드 체크아웃
+      - name: 저장소 체크아웃
         uses: actions/checkout@v4
 
-      - name: 빌드 툴 및 32비트 컴파일러 설치
+      - name: 데비안 빌드 패키지 설치
         run: |
-          sudo apt-get update
-          sudo apt-get install -y live-build debootstrap isolinux syslinux-efi \
-                                  xorriso squashfs-tools gcc-multilib nasm
+          apt-get update
+          apt-get install -y live-build debootstrap isolinux syslinux-efi \
+                             xorriso squashfs-tools gcc-multilib nasm curl ca-certificates
 
       - name: WaffleOS 클라우드 자동 빌드
         run: |
@@ -35,7 +38,8 @@ jobs:
           mkdir -p config/package-lists
           cat << 'EOF' > config/package-lists/waffle.list.chroot
           linux-image-amd64 firmware-linux-free systemd-sysv locales
-          fonts-noto-cjk fonts-nanum fcitx5 fcitx5-hangul fcitx5-frontend-qt6
+          fonts-noto-cjk fonts-noto-color-emoji fonts-nanum
+          fcitx5 fcitx5-hangul fcitx5-frontend-qt6
           virtualbox-guest-x11 virtualbox-guest-utils xorg xinit openbox unclutter
           systemd-resolved isc-dhcp-client ca-certificates curl
           python3 python3-pyqt6 python3-requests gcc gcc-multilib libc6-dev-i386 nasm
@@ -46,6 +50,7 @@ jobs:
           mkdir -p "$CHROOT/etc/systemd/system/getty@tty1.service.d"
           mkdir -p "$CHROOT/etc/skel/.config/openbox"
 
+          # 1. 자동 로그인 설정
           cat << 'EOF' > "$CHROOT/etc/systemd/system/getty@tty1.service.d/override.conf"
           [Service]
           ExecStart=
@@ -53,6 +58,7 @@ jobs:
           Type=simple
           EOF
 
+          # 2. X11 시작 및 Openbox 설정
           cat << 'EOF' > "$CHROOT/etc/skel/.bash_profile"
           if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
               export LANG="ko_KR.UTF-8"
@@ -67,8 +73,118 @@ jobs:
           export QT_IM_MODULE=fcitx
           export XMODIFIERS=@im=fcitx
           fcitx5 -d &
+          exec /usr/bin/python3 /opt/waffleos/waffle_app.py
           EOF
 
+          # 3. 32비트 C & NASM 진단 코어
+          cat << 'EOF' > "$CHROOT/opt/waffleos/cpu_detect.asm"
+          section .text
+          global get_cpu_vendor
+          get_cpu_vendor:
+              push ebp
+              mov ebp, esp
+              push ebx
+              push esi
+              mov esi, [ebp + 8]
+              xor eax, eax
+              cpuid
+              mov [esi], ebx
+              mov [esi + 4], edx
+              mov [esi + 8], ecx
+              mov byte [esi + 12], 0
+              pop esi
+              pop ebx
+              mov esp, ebp
+              pop ebp
+              ret
+          EOF
+
+          cat << 'EOF' > "$CHROOT/opt/waffleos/check_env32.c"
+          #include <stdio.h>
+          #include <stdlib.h>
+          extern void get_cpu_vendor(char *buf);
+          int main(void) {
+              char vendor[16] = {0};
+              get_cpu_vendor(vendor);
+              printf("{\"vendor\":\"%s\",\"gcc\":\"%d.%d.%d\",\"bits\":%d}",
+                     vendor, __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__, (int)(sizeof(void*)*8));
+              return 0;
+          }
+          EOF
+
+          # 4. GUI 클라이언트
+          cat << 'EOF' > "$CHROOT/opt/waffleos/waffle_app.py"
+          import sys, os, subprocess
+          from PyQt6.QtCore import Qt
+          from PyQt6.QtGui import QFont
+          from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
+                                       QHBoxLayout, QTextEdit, QTextBrowser, QPushButton, QLabel, QFrame)
+
+          class WaffleWindow(QMainWindow):
+              def __init__(self):
+                  super().__init__()
+                  self.init_ui()
+
+              def init_ui(self):
+                  self.setWindowTitle("WaffleOS")
+                  self.setStyleSheet("QMainWindow { background-color: #0e0e12; } QFrame#H { background-color: #16161d; min-height: 52px; } QPushButton { background-color: #242430; color: white; border-radius: 6px; padding: 6px 14px; font-weight: bold; }")
+                  cen = QWidget(); self.setCentralWidget(cen)
+                  lay = QVBoxLayout(cen); lay.setContentsMargins(0, 0, 0, 0)
+                  h_frame = QFrame(); h_frame.setObjectName("H")
+                  h = QHBoxLayout(h_frame)
+                  lbl = QLabel("🧇 WaffleOS Ultimate")
+                  lbl.setFont(QFont("Noto Sans CJK KR", 13, QFont.Weight.Bold))
+                  lbl.setStyleSheet("color: #60cdff;"); h.addWidget(lbl)
+                  btn_p = QPushButton("⚙️ C/NASM 32비트 진단")
+                  btn_p.clicked.connect(self.probe); h.addWidget(btn_p)
+                  h.addStretch()
+                  btn_esc = QPushButton("⚡ 윈도우 복귀(절전)")
+                  btn_esc.setStyleSheet("background-color: #8c5a00; color: #ffeb99;")
+                  btn_esc.clicked.connect(lambda: subprocess.run(["systemctl", "suspend"]))
+                  h.addWidget(btn_esc)
+                  btn_q = QPushButton("🚪 종료")
+                  btn_q.setStyleSheet("background-color: #881a1a; color: white;")
+                  btn_q.clicked.connect(lambda: subprocess.run(["systemctl", "poweroff"]))
+                  h.addWidget(btn_q)
+                  lay.addWidget(h_frame)
+
+                  self.chat = QTextBrowser()
+                  self.chat.setFont(QFont("Noto Color Emoji", 11))
+                  self.chat.setStyleSheet("background-color: #121218; color: #eee; border: none; padding: 20px;")
+                  self.chat.append("<div style='text-align:center; margin:30px;'><h2 style='color:#60cdff;'>🧇 WaffleOS에 오신 것을 환영합니다!</h2><p style='color:#888;'>8개국어 & 컬러 이모지 & 32비트 C/NASM 코어 구동 중</p></div>")
+                  lay.addWidget(self.chat, stretch=1)
+
+                  in_box = QHBoxLayout(); in_box.setContentsMargins(16, 8, 16, 16)
+                  self.inp = QTextEdit(); self.inp.setFixedHeight(64)
+                  self.inp.setStyleSheet("background-color: #1c1c24; color: white; border: 1px solid #333; border-radius: 8px; padding: 8px;")
+                  self.inp.setPlaceholderText("질문 입력... (이모지 🔥✨ 지원)")
+                  in_box.addWidget(self.inp)
+                  btn_s = QPushButton("전송"); btn_s.setFixedSize(80, 64)
+                  btn_s.setStyleSheet("background-color: #0078d4; color: white; font-weight: bold;")
+                  btn_s.clicked.connect(self.send); in_box.addWidget(btn_s)
+                  lay.addLayout(in_box)
+
+              def probe(self):
+                  try:
+                      out = subprocess.check_output(["/opt/waffleos/waffle_probe32"], text=True)
+                      self.chat.append(f"<div style='background:#1c1c24; padding:12px; border-radius:8px; margin:8px 0; color:#a6e22e;'><b>[32비트 C/NASM 코어 진단]</b><br/>{out}</div>")
+                  except Exception as e:
+                      self.chat.append(f"<div style='color:red;'>진단 오류: {e}</div>")
+
+              def send(self):
+                  t = self.inp.toPlainText().strip()
+                  if t:
+                      self.chat.append(f"<div style='text-align:right; margin:8px;'><span style='background:#005fb8; color:white; padding:8px 14px; border-radius:10px;'>{t}</span></div>")
+                      self.chat.append("<div style='margin:8px;'><span style='background:#222; color:#e0e0e0; padding:8px 14px; border-radius:10px;'>🧇 WaffleOS AI 시스템이 정상 가동 중입니다.</span></div>")
+                      self.inp.clear()
+
+          if __name__ == '__main__':
+              app = QApplication(sys.argv)
+              w = WaffleWindow(); w.showFullScreen()
+              sys.exit(app.exec())
+          EOF
+
+          # 5. 로케일 설정 및 C/NASM 컴파일 훅
           mkdir -p config/hooks/live
           cat << 'EOF' > config/hooks/live/01-setup.hook.chroot
           #!/bin/sh
@@ -76,23 +192,27 @@ jobs:
           sed -i -e 's/# ko_KR.UTF-8 UTF-8/ko_KR.UTF-8 UTF-8/' /etc/locale.gen
           locale-gen
           update-locale LANG=ko_KR.UTF-8
+
           useradd -m -s /bin/bash -G video,audio,netdev,sudo waffle
           echo "waffle:waffle" | chpasswd
-          chown -R waffle:waffle /home/waffle
+
+          cd /opt/waffleos
+          nasm -f elf32 cpu_detect.asm -o cpu_detect.o
+          gcc -m32 -O2 check_env32.c cpu_detect.o -o waffle_probe32
+          chmod +x waffle_probe32 waffle_app.py
+          rm -f *.o *.c *.asm
+          chown -R waffle:waffle /home/waffle /opt/waffleos
           EOF
           chmod +x config/hooks/live/01-setup.hook.chroot
 
-          sudo lb build
-          mv live-image-amd64.hybrid.iso WaffleOS-v1.0-ko-amd64.iso
+          lb build
+          cp live-image-amd64.hybrid.iso ../WaffleOS-v1.0-ko-amd64.iso
 
-      - name: 공개 릴리즈 페이지에 ISO 자동 업로드
+      - name: 공개 릴리즈에 ISO 업로드
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
           tag_name: v1.0
           name: "WaffleOS v1.0 정식 배포판"
-          body: |
-            ## 🧇 WaffleOS v1.0 (Korean Edition)
-            - **미니멀 AI OS**: 다크 모드 키오스크 및 한국어 기본 탑재
-            - **다운로드**: 아래 WaffleOS-v1.0-ko-amd64.iso 파일을 다운로드하여 VirtualBox에서 바로 부팅하세요!
-          files: build/WaffleOS-v1.0-ko-amd64.isO
+          body: "WaffleOS 한국어 부팅 ISO입니다. 다운로드하여 VirtualBox에서 바로 부팅하세요!"
+          files: WaffleOS-v1.0-ko-amd64.iso
+        
